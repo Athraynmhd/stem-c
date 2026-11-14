@@ -1,0 +1,60 @@
+﻿/* Font Switzer, Clash Display, dan Sentient dari Fontshare, di-host lokal.
+   Sebelumnya diambil lewat @import ke api.fontshare.com yang memblokir render.
+   Lisensi Fontshare (ITF FFL) mengizinkan self-hosting. */
+
+/* Switzer */
+@font-face {
+  font-family: 'Switzer';
+  src: url('4MCJYGQDIOOXHWSIIB2OYNDBEALJSOGN.woff2') format('woff2');
+  font-weight: 100 900;
+  font-display: swap;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Switzer';
+  src: url('AFY5UJBPUVSDM77Q42DSHPT5JUNR7N4Y.woff2') format('woff2');
+  font-weight: 100 900;
+  font-display: swap;
+  font-style: italic;
+}
+
+
+
+/* Clash Display */
+@font-face {
+  font-family: 'Clash Display';
+  src: url('THOOS4VOCKT7H2XEB27NQDYM2NYS4AAR.woff2') format('woff2');
+  font-weight: 200 700;
+  font-display: swap;
+  font-style: normal;
+}
+
+
+
+/* Sentient */
+@font-face {
+  font-family: 'Sentient';
+  src: url('SIH66VPT4WS2HIF5PEJNDU4INNUF54LG.woff2') format('woff2');
+  font-weight: 400;
+  font-display: swap;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Sentient';
+  src: url('VLFJG7GKGM3UAH53OH7GOU7MPNJDZTJR.woff2') format('woff2');
+  font-weight: 400;
+  font-display: swap;
+  font-style: italic;
+}
+@font-face {
+  font-family: 'Sentient';
+  src: url('RNUZPHMIVMPXFHVACRGCAJ32E6WUEDVU.woff2') format('woff2');
+  font-weight: 500;
+  font-display: swap;
+  font-style: normal;
+}
+
+
+
+
+
