@@ -1,0 +1,28 @@
+<?php
+
+return [
+    'home' => 'Home',
+    'about' => 'About Us',
+    'researchers' => 'Researchers',
+    'researcher_directory' => 'Directory',
+    'research' => 'Research & Publications',
+    'catalog' => 'Research Catalog',
+    'publications' => 'Publications',
+    'products' => 'Products & Innovation',
+    'hki' => 'IPR',
+    'modules' => 'Teaching Modules',
+    'news_events' => 'News & Events',
+    'news' => 'News',
+    'agenda' => 'Agenda',
+    'calendar' => 'Calendar',
+    'gallery' => 'Gallery',
+    'call' => 'Call for Papers',
+    'partnership' => 'Partnership',
+    'partners' => 'Partners',
+    'mou' => 'MoU/MoA',
+    'apply' => 'Propose Collaboration',
+    'documents' => 'Documents',
+    'contact' => 'Contact',
+    'search' => 'Search',
+    'privacy' => 'Privacy Policy',
+];

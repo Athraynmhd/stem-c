@@ -1,0 +1,2669 @@
+/* ==========================================================================
+   Penyesuaian STEM-C USK untuk situs publik.
+   File ini dimuat paling akhir agar menimpa style.min.css tanpa perlu
+   mengubah berkas CSS tema dasar.
+
+   Daftar isi
+   1. Token spacing
+   2. Menu utama (2c sidenav)
+   3. Watermark footer
+   4. Kerangka seksi & judul
+   5. Filter, chip, dan badge
+   6. Daftar publikasi
+   7. Agenda & kartu kegiatan
+   8. Galeri dokumentasi
+   9. Halaman detail
+  10. Status kosong & paginasi
+  11. Pill dan tombol panah beranda
+  12. Logo mitra
+  13. Footer
+   14. Navigasi slider berita
+   15. Bingkai gambar konsisten
+   ========================================================================== */
+
+/* ==========================================================================
+   1. Token spacing
+   Seluruh jarak pada modul baru mengacu ke variabel di bawah ini. Nilainya
+   diturunkan sekali per breakpoint sehingga padding antar komponen selalu
+   bergerak seirama, bukan diatur satu per satu.
+   ========================================================================== */
+:root {
+	--stemc-section: 150px;
+	--stemc-gap: 30px;
+	--stemc-radius: 30px;
+	--stemc-radius-sm: 20px;
+	--stemc-line: rgba(0, 0, 0, 0.12);
+	--stemc-muted: rgba(0, 0, 0, 0.55);
+	--stemc-surface: #f5f6f7;
+	--stemc-banner-h: 540px;
+	--stemc-frame-wide: 16 / 9;
+	--stemc-frame-card: 4 / 3;
+	--stemc-frame-shot: 1 / 1;
+}
+
+@media (max-width: 1199px) {
+	:root {
+		--stemc-section: 110px;
+		--stemc-gap: 26px;
+		--stemc-banner-h: 460px;
+	}
+}
+
+@media (max-width: 991px) {
+	:root {
+		--stemc-section: 90px;
+		--stemc-gap: 24px;
+		--stemc-radius: 24px;
+		--stemc-banner-h: 390px;
+	}
+}
+
+@media (max-width: 767px) {
+	:root {
+		--stemc-section: 70px;
+		--stemc-gap: 20px;
+		--stemc-radius: 20px;
+		--stemc-radius-sm: 16px;
+		--stemc-banner-h: 310px;
+	}
+}
+
+/* ==========================================================================
+   2. Menu utama
+   Latar menu bawaan (shape_02.svg) adalah PNG 697x73 px, jadi lebarnya mati
+   dan tidak muat untuk enam menu berbahasa Indonesia. Gambar itu disembunyikan
+   lalu diganti pill CSS pada .navbar-nav yang lebarnya mengikuti isi menu.
+   ========================================================================== */
+@media (min-width: 992px) {
+	/* Gambar bawaan dilepas dari alur, bentuknya dipasang ulang lewat
+	   border-image pada .navbar-nav. */
+	.theme-main-menu.menu-style-two .bg-shape {
+		display: none;
+	}
+
+	.theme-main-menu.menu-style-two .navbar .navbar-nav {
+		position: relative;
+		/* Tab SVG-nya putih. Kunci skema terang supaya dark mode browser/
+		   extension tidak memutihkan teks di atas tab (bentuk tidak diubah). */
+		color-scheme: light;
+	}
+
+	/* Bentuk tab asli (shape_02.svg) berukuran mati 697x73 px. Kolom tengahnya,
+	   x 160 sampai 537, seragam penuh dari atas ke bawah, sehingga gambar itu
+	   bisa dipakai sebagai 9-slice: potongan kiri dan kanan yang memuat
+	   lengkungan tetap utuh, sedangkan bagian tengah melar mengikuti lebar menu.
+	   Dengan begitu jumlah menu bisa bertambah tanpa mengubah bentuknya.
+
+	   Tepi miringnya paling jauh menjorok sampai x=73, sehingga kolom x=74 ke
+	   kanan sudah putih penuh di setiap baris. Irisan 85 px karena itu adalah
+	   potongan tersempit yang masih memuat seluruh lengkungan. Potongan itu
+	   digambar pada 50 px supaya lengkungannya lebih tegak dan bidang putih
+	   kosong di kiri-kanan teks menu tinggal sedikit. */
+	.theme-main-menu.menu-style-two .navbar .navbar-nav:after {
+		content: "";
+		position: absolute;
+		z-index: -1;
+		top: -14px;
+		left: -50px;
+		right: -50px;
+		height: 73px;
+		border: 0 solid transparent;
+		border-left-width: 50px;
+		border-right-width: 50px;
+		border-image-source: url(../images/shape/shape_02.svg);
+		border-image-slice: 0 85 fill;
+		border-image-width: 0 50px;
+	}
+
+	.theme-main-menu.menu-style-two .nav-item .nav-link {
+		margin: 0 14px;
+		font-size: 17px;
+		color: #000;
+	}
+
+	.theme-main-menu.menu-style-two .nav-item .nav-link:hover,
+	.theme-main-menu.menu-style-two .nav-item .nav-link.is-active,
+	.theme-main-menu.menu-style-two .nav-item .nav-link .stemc-caret {
+		color: #000;
+	}
+
+	/* Margin luar menu pertama dan terakhir hanya menambah jarak ke tepi tab,
+	   bukan jarak antar menu, jadi dilepas. Butir pertama adalah logo khusus
+	   mobile yang tersembunyi di sini, karena itu dipilih lewat :nth-child(2). */
+	.theme-main-menu.menu-style-two .navbar-nav .nav-item:nth-child(2) .nav-link {
+		margin-left: 0;
+	}
+
+	.theme-main-menu.menu-style-two .navbar-nav .nav-item:last-child .nav-link {
+		margin-right: 0;
+	}
+
+	/* Pemisah "/" berjarak tetap 4 px dari titik tengah celah antar menu,
+	   jadi nilainya selalu margin + 4. */
+	.theme-main-menu.menu-style-two .nav-item .nav-link:before {
+		right: -18px;
+		color: rgba(0, 0, 0, 0.35);
+	}
+}
+
+/* Tab selalu terpusat di viewport, sedangkan blok kanan header lebih lebar
+   daripada logo, sehingga ujung kanan tab yang lebih dulu berbenturan.
+   Menu bertambah Peneliti + Riset (~8 induk): caret + label ID memakan ruang.
+   CTA baru ditampilkan mulai 1600 px; di bawah itu lewat sidenav/footer.
+
+   Di 992-1199 px responsive.css menyembunyikan navbar,
+   sehingga rentang itu tidak perlu ditangani di sini. */
+@media (min-width: 1200px) and (max-width: 1599px) {
+	.theme-main-menu.menu-style-two .right-widget .btn-one {
+		display: none;
+	}
+}
+
+@media (min-width: 1200px) and (max-width: 1399px) {
+	.theme-main-menu.menu-style-two .navbar-nav .nav-link {
+		font-size: 13px;
+		padding-left: 10px;
+		padding-right: 10px;
+	}
+}
+
+/* --------------------------------------------------------------------------
+   2b. Menu menempel saat digulir
+   CSS tema dasar menyediakan kelas .sticky-menu + .fixed, tetapi header ini belum
+   memakainya sehingga menu ikut hilang saat halaman digulir. Di bawah ini
+   keadaan .fixed disesuaikan: latar putih, logo versi gelap, dan tab lengkung
+   dilepas karena bentuk itu dirancang untuk melayang di atas hero gelap.
+   -------------------------------------------------------------------------- */
+.theme-main-menu .logo a {
+	position: relative;
+}
+
+/* Kedua logo ditumpuk agar pergantiannya tidak menggeser tata letak. */
+.theme-main-menu .logo .logo-gelap {
+	position: absolute;
+	left: 0;
+	top: 0;
+	opacity: 0;
+}
+
+.theme-main-menu .logo .logo-terang,
+.theme-main-menu .logo .logo-gelap {
+	transition: opacity 0.3s ease;
+}
+
+.theme-main-menu.fixed .logo .logo-terang {
+	opacity: 0;
+}
+
+.theme-main-menu.fixed .logo .logo-gelap {
+	opacity: 1;
+}
+
+/* Padding 55px milik .gap-two terlalu tinggi untuk bilah yang menempel. */
+.theme-main-menu.fixed.gap-two {
+	padding-top: 18px;
+	padding-bottom: 18px;
+}
+
+.theme-main-menu.fixed {
+	box-shadow: 0 8px 28px -14px rgba(16, 16, 16, 0.35);
+	/* Header menempel berlatar putih — sama seperti tab, jangan ikut invert teks. */
+	color-scheme: light;
+}
+
+@media (min-width: 992px) {
+	/* Tab lengkung memakai latar putih, jadi tidak terlihat lagi begitu
+	   header ikut berlatar putih. Diganti garis pemisah tipis. */
+	.theme-main-menu.menu-style-two.fixed .navbar .navbar-nav:after {
+		display: none;
+	}
+
+	.theme-main-menu.menu-style-two.fixed .nav-item .nav-link {
+		color: rgba(0, 0, 0, 0.7);
+	}
+
+	.theme-main-menu.menu-style-two.fixed .nav-item .nav-link:hover {
+		color: #000;
+	}
+}
+
+/* Penanda halaman aktif */
+.theme-main-menu .nav-item .nav-link.is-active {
+	font-weight: 600;
+	color: #000;
+}
+
+.sidebar-nav .sidebar-nav-item a.is-active {
+	font-weight: 600;
+	text-decoration: underline;
+	text-underline-offset: 6px;
+}
+
+/* ==========================================================================
+   2c. Sidenav (offcanvas)
+   Template menarget .nav-item > a, sementara STEM-C membungkus tautan di
+   .stemc-subnav-row — tanpa override, induk submenu dan Kontak beda ritme.
+   Blok bawah (locale / CTA / alamat / sosial) juga diseragamkan ke kiri.
+   ========================================================================== */
+.offcanvas.sidebar-nav {
+	padding: 24px 24px 28px;
+}
+
+.offcanvas.sidebar-nav .sidebar-nav-item {
+	padding: 18px 0 8px;
+}
+
+.offcanvas.sidebar-nav .sidebar-nav-item .nav-item {
+	margin: 0;
+}
+
+.offcanvas.sidebar-nav .sidebar-nav-item .nav-item + .nav-item {
+	margin-top: 2px;
+}
+
+.offcanvas.sidebar-nav .sidebar-nav-item .nav-item > a,
+.offcanvas.sidebar-nav .sidebar-nav-item .stemc-subnav-row > a {
+	display: block;
+	flex: 1 1 auto;
+	min-width: 0;
+	padding: 8px 0;
+	font-size: 20px;
+	line-height: 1.35;
+	color: #000;
+	transition: color 0.3s ease;
+}
+
+.offcanvas.sidebar-nav .sidebar-nav-item .nav-item:hover > a,
+.offcanvas.sidebar-nav .sidebar-nav-item .nav-item:hover > .stemc-subnav-row > a,
+.offcanvas.sidebar-nav .sidebar-nav-item .stemc-subnav-row > a:hover {
+	color: #000;
+}
+
+.offcanvas.sidebar-nav .stemc-subnav-row {
+	gap: 8px;
+	min-height: 44px;
+}
+
+.offcanvas.sidebar-nav .stemc-subnav-toggle {
+	width: 30px;
+	height: 30px;
+	border-color: rgba(0, 0, 0, 0.18);
+	font-size: 12px;
+}
+
+.stemc-sidenav-tools {
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	gap: 14px;
+	margin-top: 12px;
+	padding-top: 20px;
+	border-top: 1px solid var(--stemc-line);
+}
+
+.stemc-sidenav-locale {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	font-size: 15px;
+	letter-spacing: 0.04em;
+}
+
+.stemc-sidenav-locale a {
+	color: var(--stemc-muted);
+	text-decoration: none;
+	transition: color 0.2s ease;
+}
+
+.stemc-sidenav-locale a:hover,
+.stemc-sidenav-locale a.is-active {
+	color: #000;
+	font-weight: 600;
+}
+
+.stemc-sidenav-locale span {
+	color: rgba(0, 0, 0, 0.28);
+}
+
+.stemc-sidenav-meta {
+	margin-top: 28px;
+	padding-top: 22px;
+	border-top: 1px solid var(--stemc-line);
+}
+
+.stemc-sidenav-meta .title {
+	margin: 0 0 10px;
+	padding: 0;
+	font-size: 15px;
+	letter-spacing: 0.06em;
+}
+
+.stemc-sidenav-meta p {
+	margin: 0 0 14px;
+	font-size: 16px;
+	line-height: 1.55;
+	color: var(--stemc-muted);
+}
+
+.stemc-sidenav-meta p:last-child {
+	margin-bottom: 0;
+}
+
+.stemc-sidenav-label {
+	display: block;
+	margin-bottom: 2px;
+	font-size: 12px;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	color: rgba(0, 0, 0, 0.45);
+}
+
+.offcanvas.sidebar-nav .stemc-sidenav-meta p a {
+	font-size: 1em;
+	font-weight: 500;
+	color: #000;
+	text-decoration: underline;
+	text-underline-offset: 3px;
+}
+
+.stemc-sidenav-social {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px 18px;
+	margin-top: 22px;
+	padding-top: 18px;
+	border-top: 1px solid var(--stemc-line);
+}
+
+.stemc-sidenav-social a {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	margin: 0;
+	font-size: 14px;
+	color: #000;
+	text-decoration: none;
+}
+
+.stemc-sidenav-social a i {
+	font-size: 1.15em;
+}
+
+.stemc-sidenav-social a:hover {
+	color: #d60004;
+}
+
+@media (max-width: 575px) {
+	.offcanvas.sidebar-nav {
+		width: min(100vw, 380px);
+		padding: 20px 18px 24px;
+	}
+
+	.offcanvas.sidebar-nav .sidebar-nav-item .nav-item > a,
+	.offcanvas.sidebar-nav .sidebar-nav-item .stemc-subnav-row > a {
+		font-size: 18px;
+	}
+}
+
+/* ==========================================================================
+   3. Watermark footer
+   Gaya lama menaruh kata ini position:absolute lalu mendorongnya 41% ke bawah
+   (transform: translate(-50%, 41%)), sehingga separuh hurufnya sengaja
+   terpotong tepi wrapper yang overflow-nya hidden. Untuk nama lembaga,
+   kata yang terpenggal terbaca sebagai cacat.
+
+   Elemen karena itu dikembalikan ke alur normal. Tinggi wrapper kini mengikuti
+   tinggi hurufnya, jadi tidak ada lebar layar yang bisa memotongnya, dan
+   padding bawah wrapper tidak perlu lagi menyediakan ruang sebesar 260 px.
+
+   Ukuran memakai vw, bukan nilai mati per breakpoint seperti responsive.css,
+   supaya lebar katanya tetap proporsional di antara breakpoint.
+   ========================================================================== */
+.footer-two .bg-wrapper .water-mark {
+	position: static;
+	transform: none;
+	display: block;
+	/* line-height di bawah 1 membuat huruf meluber ~0.15em keluar kotak elemen,
+	   sedangkan gradasi di bawah hanya melukis sebatas kotak itu. Padding 0.2em
+	   melebarkan kanvasnya, lalu margin negatif di bawah dan pengurangan di
+	   margin atas menetralkan efeknya pada tata letak. */
+	padding: 0.2em 0;
+	margin-top: calc(clamp(36px, 5vw, 80px) - 0.2em);
+	margin-bottom: -0.2em;
+	text-align: center;
+	white-space: nowrap;
+	/* "STEM-C" pada Clash Display 600 berukuran lebar ~4,4x tinggi fontnya,
+	   sehingga 19.5vw menahan lebar kata di sekitar 86% layar. Batas atas
+	   340 px menjaganya tidak jadi terlalu dominan di monitor ultralebar. */
+	font-size: clamp(54px, 19.5vw, 340px);
+	line-height: 0.85;
+	letter-spacing: 0.048em;
+	/* letter-spacing menyisakan satu spasi sesudah huruf terakhir, sehingga
+	   kata tampak meleset setengah spasi ke kiri ketika dipusatkan. */
+	text-indent: 0.024em;
+	/* Putih pekat sebesar ini menyaingi isi footer. Warna dasar dipakai
+	   sebagai cadangan bila gradasi di bawah tidak didukung. */
+	color: rgba(255, 255, 255, 0.11);
+}
+
+/* Gradasi membuat hurufnya meredup ke bawah sehingga membaur dengan tepi
+   footer, bukan berhenti mendadak seperti garis. */
+@supports ((-webkit-background-clip: text) or (background-clip: text)) {
+	.footer-two .bg-wrapper .water-mark {
+		/* Persentase dipatok pada rentang tempat huruf berada di dalam kotak,
+		   bukan 0%-100%, supaya gradasinya benar-benar terlihat memudar. */
+		background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.18) 18%, rgba(255, 255, 255, 0.045) 68%);
+		-webkit-background-clip: text;
+		background-clip: text;
+		color: transparent;
+	}
+}
+
+/* ==========================================================================
+   4. Kerangka seksi & judul
+   ========================================================================== */
+.stemc-section {
+	padding: var(--stemc-section) 0;
+}
+
+.stemc-section--tint {
+	background: var(--stemc-surface);
+}
+
+.stemc-intro {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr);
+	gap: var(--stemc-gap);
+	align-items: end;
+	margin-bottom: calc(var(--stemc-gap) * 2);
+}
+
+.stemc-intro__text {
+	margin: 0;
+	max-width: 56ch;
+	font-size: 24px;
+	line-height: 1.6em;
+	color: var(--stemc-muted);
+}
+
+@media (max-width: 991px) {
+	.stemc-intro {
+		grid-template-columns: 1fr;
+		align-items: start;
+		gap: calc(var(--stemc-gap) * 0.6);
+	}
+
+	.stemc-intro__text {
+		font-size: 20px;
+	}
+}
+
+/* ==========================================================================
+   5. Filter, chip, dan badge
+   ========================================================================== */
+.stemc-stats {
+	display: grid;
+	grid-template-columns: repeat(5, minmax(0, 1fr));
+	gap: var(--stemc-gap);
+	margin-bottom: calc(var(--stemc-gap) * 2);
+}
+
+.stemc-stat {
+	padding: 28px 26px;
+	border: 1px solid var(--stemc-line);
+	border-radius: var(--stemc-radius-sm);
+}
+
+.stemc-stat__num {
+	font-size: 48px;
+	line-height: 1;
+}
+
+.stemc-stat__label {
+	margin-top: 10px;
+	font-size: 13px;
+	letter-spacing: 1px;
+	color: var(--stemc-muted);
+}
+
+@media (max-width: 1199px) {
+	.stemc-stats {
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+	}
+}
+
+@media (max-width: 575px) {
+	.stemc-stats {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+
+	.stemc-stat {
+		padding: 20px 18px;
+	}
+
+	.stemc-stat__num {
+		font-size: 34px;
+	}
+}
+
+.stemc-filter {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--stemc-gap);
+	margin-bottom: calc(var(--stemc-gap) * 1.5);
+	padding-bottom: var(--stemc-gap);
+	border-bottom: 1px solid var(--stemc-line);
+}
+
+.stemc-chips {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+}
+
+.stemc-chip {
+	display: inline-flex;
+	align-items: center;
+	height: 44px;
+	padding: 0 22px;
+	border: 1px solid var(--stemc-line);
+	border-radius: 50px;
+	font-size: 16px;
+	line-height: 1;
+	color: #000;
+	transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+.stemc-chip:hover {
+	border-color: #000;
+	color: #000;
+}
+
+.stemc-chip.is-active {
+	background: #000;
+	border-color: #000;
+	color: #fff;
+}
+
+.stemc-filter__year {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	margin: 0;
+}
+
+.stemc-filter__label {
+	font-size: 13px;
+	letter-spacing: 1px;
+	color: var(--stemc-muted);
+}
+
+.stemc-select {
+	height: 44px;
+	padding: 0 18px;
+	border: 1px solid var(--stemc-line);
+	border-radius: 50px;
+	background: transparent;
+	font-size: 16px;
+	color: #000;
+	cursor: pointer;
+}
+
+.stemc-badge {
+	display: inline-block;
+	padding: 6px 16px;
+	border-radius: 50px;
+	background: #eaeaea;
+	font-family: "Clash Display", sans-serif;
+	font-weight: 500;
+	font-size: 12px;
+	letter-spacing: 1px;
+	text-transform: uppercase;
+	line-height: 1.5;
+}
+
+.stemc-icon-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 56px;
+	height: 56px;
+	border-radius: 50%;
+	background: #eaeaea;
+	font-size: 20px;
+	color: #000;
+	transition: background 0.3s ease, color 0.3s ease;
+}
+
+.stemc-icon-btn:hover {
+	background: #000;
+	color: #fff;
+}
+
+/* ==========================================================================
+   6. Daftar publikasi
+   ========================================================================== */
+.stemc-pub {
+	display: grid;
+	grid-template-columns: 110px minmax(0, 1fr) 56px;
+	gap: var(--stemc-gap);
+	align-items: start;
+	padding: 32px 0;
+	border-bottom: 1px solid var(--stemc-line);
+}
+
+.stemc-pub:first-child {
+	border-top: 1px solid var(--stemc-line);
+}
+
+.stemc-pub__year {
+	font-size: 40px;
+	line-height: 1;
+	color: var(--stemc-muted);
+}
+
+.stemc-pub__title {
+	margin: 14px 0 10px;
+	font-size: 26px;
+	line-height: 1.35em;
+}
+
+.stemc-pub__authors,
+.stemc-pub__venue {
+	margin: 0;
+	font-size: 17px;
+	line-height: 1.6em;
+	color: var(--stemc-muted);
+}
+
+.stemc-pub__venue {
+	margin-top: 6px;
+	font-style: italic;
+}
+
+.stemc-pub__action {
+	display: flex;
+	justify-content: flex-end;
+}
+
+@media (max-width: 767px) {
+	.stemc-pub {
+		grid-template-columns: minmax(0, 1fr) auto;
+		gap: calc(var(--stemc-gap) * 0.6);
+		padding: 26px 0;
+	}
+
+	/* Tahun pindah ke atas judul agar kolom teks tetap selebar mungkin. */
+	.stemc-pub__year {
+		grid-column: 1 / -1;
+		font-size: 28px;
+	}
+
+	.stemc-pub__title {
+		margin: 12px 0 8px;
+		font-size: 21px;
+	}
+
+	.stemc-icon-btn {
+		width: 48px;
+		height: 48px;
+		font-size: 17px;
+	}
+}
+
+/* ==========================================================================
+   7. Agenda & kartu kegiatan
+   ========================================================================== */
+.stemc-agenda {
+	display: flex;
+	flex-direction: column;
+	gap: var(--stemc-gap);
+}
+
+.stemc-agenda__item {
+	display: grid;
+	grid-template-columns: 118px minmax(0, 1fr) auto;
+	gap: var(--stemc-gap);
+	align-items: center;
+	padding: var(--stemc-gap);
+	border: 1px solid var(--stemc-line);
+	border-radius: var(--stemc-radius);
+	transition: border-color 0.3s ease;
+}
+
+.stemc-agenda__item:hover {
+	border-color: #000;
+}
+
+.stemc-date {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	aspect-ratio: 1;
+	padding: 12px;
+	border-radius: var(--stemc-radius-sm);
+	background: #000;
+	color: #fff;
+	text-align: center;
+}
+
+.stemc-date__day {
+	font-size: 40px;
+	line-height: 1;
+}
+
+.stemc-date__month {
+	margin-top: 6px;
+	font-size: 14px;
+	letter-spacing: 2px;
+}
+
+.stemc-date__year {
+	margin-top: 2px;
+	font-size: 13px;
+	opacity: 0.6;
+}
+
+.stemc-agenda__title {
+	margin: 12px 0;
+	font-size: 26px;
+	line-height: 1.3em;
+}
+
+.stemc-agenda__text {
+	margin: 0;
+	font-size: 17px;
+	line-height: 1.6em;
+	color: var(--stemc-muted);
+}
+
+.stemc-meta {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px 24px;
+	margin: 0 0 12px;
+	padding: 0;
+	font-size: 16px;
+	color: var(--stemc-muted);
+}
+
+.stemc-meta li {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.stemc-meta--lg {
+	gap: 12px 32px;
+	margin-bottom: 28px;
+	font-size: 18px;
+}
+
+@media (max-width: 991px) {
+	.stemc-agenda__item {
+		grid-template-columns: 96px minmax(0, 1fr);
+	}
+
+	/* Tombol turun ke baris kedua dan sejajar dengan kolom teks. */
+	.stemc-agenda__action {
+		grid-column: 2;
+	}
+
+	.stemc-agenda__title {
+		font-size: 22px;
+	}
+}
+
+@media (max-width: 575px) {
+	.stemc-agenda__item {
+		grid-template-columns: 1fr;
+		gap: calc(var(--stemc-gap) * 0.7);
+	}
+
+	.stemc-agenda__action {
+		grid-column: 1;
+	}
+
+	.stemc-date {
+		aspect-ratio: auto;
+		flex-direction: row;
+		gap: 8px;
+		align-items: baseline;
+		justify-content: flex-start;
+		padding: 12px 18px;
+		width: -moz-fit-content;
+		width: fit-content;
+	}
+
+	.stemc-date__day {
+		font-size: 28px;
+	}
+
+	.stemc-date__month,
+	.stemc-date__year {
+		margin-top: 0;
+	}
+}
+
+.stemc-grid {
+	display: grid;
+	gap: calc(var(--stemc-gap) * 1.3);
+}
+
+.stemc-grid--3 {
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+@media (max-width: 991px) {
+	.stemc-grid--3 {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+}
+
+@media (max-width: 575px) {
+	.stemc-grid--3 {
+		grid-template-columns: 1fr;
+	}
+}
+
+.stemc-card__media {
+	position: relative;
+	display: block;
+	overflow: hidden;
+	aspect-ratio: var(--stemc-frame-card);
+	border-radius: var(--stemc-radius);
+	background: var(--stemc-surface);
+}
+
+.stemc-card__media img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	object-position: center;
+	transition: transform 0.6s ease;
+}
+
+.stemc-card:hover .stemc-card__media img {
+	transform: scale(1.05);
+}
+
+.stemc-card__tag {
+	position: absolute;
+	top: 16px;
+	right: 16px;
+	padding: 7px 18px;
+	border-radius: 30px;
+	background: #fff;
+	font-size: 12px;
+	letter-spacing: 1px;
+	color: #000;
+}
+
+.stemc-card__body {
+	padding-top: 22px;
+}
+
+.stemc-card__date {
+	margin: 0 0 10px;
+	font-size: 13px;
+	letter-spacing: 1px;
+	color: var(--stemc-muted);
+}
+
+.stemc-card__title {
+	margin: 0 0 12px;
+	font-size: 24px;
+	line-height: 1.3em;
+}
+
+.stemc-card__meta {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin: 0;
+	font-size: 16px;
+	color: var(--stemc-muted);
+}
+
+/* ==========================================================================
+   8. Galeri dokumentasi
+   ========================================================================== */
+.stemc-gallery {
+	display: grid;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	gap: var(--stemc-gap);
+}
+
+@media (max-width: 1199px) {
+	.stemc-gallery {
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+	}
+}
+
+@media (max-width: 767px) {
+	.stemc-gallery {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+}
+
+.stemc-shot {
+	margin: 0;
+}
+
+.stemc-shot__link {
+	position: relative;
+	display: block;
+	overflow: hidden;
+	aspect-ratio: var(--stemc-frame-shot);
+	border-radius: var(--stemc-radius-sm);
+	background: var(--stemc-surface);
+}
+
+.stemc-shot__link img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	object-position: center;
+	transition: transform 0.6s ease;
+}
+
+.stemc-shot:hover .stemc-shot__link img {
+	transform: scale(1.06);
+}
+
+.stemc-shot__caption {
+	position: absolute;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	padding: 44px 20px 18px;
+	background: linear-gradient(to top, rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0));
+	color: #fff;
+	opacity: 0;
+	transition: opacity 0.35s ease;
+}
+
+.stemc-shot:hover .stemc-shot__caption,
+.stemc-shot__link:focus-visible .stemc-shot__caption {
+	opacity: 1;
+}
+
+/* Perangkat sentuh tidak punya status hover, jadi keterangan dibiarkan tampil. */
+@media (hover: none) {
+	.stemc-shot__caption {
+		opacity: 1;
+	}
+}
+
+.stemc-shot__title {
+	font-size: 16px;
+	line-height: 1.35em;
+}
+
+.stemc-shot__date {
+	font-size: 13px;
+	opacity: 0.75;
+}
+
+.stemc-shot__play {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 62px;
+	height: 62px;
+	border-radius: 50%;
+	background: rgba(255, 255, 255, 0.92);
+	color: #000;
+	font-size: 18px;
+	transform: translate(-50%, -50%);
+	transition: transform 0.3s ease;
+}
+
+.stemc-shot:hover .stemc-shot__play {
+	transform: translate(-50%, -50%) scale(1.08);
+}
+
+/* ==========================================================================
+   9. Halaman detail
+   ========================================================================== */
+.stemc-detail {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) 320px;
+	gap: calc(var(--stemc-gap) * 2);
+	align-items: start;
+}
+
+@media (max-width: 991px) {
+	.stemc-detail {
+		grid-template-columns: 1fr;
+	}
+}
+
+.stemc-detail__lead {
+	margin: 0 0 28px;
+	font-size: 22px;
+	line-height: 1.6em;
+}
+
+.stemc-detail__actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 16px;
+	margin-top: calc(var(--stemc-gap) * 1.5);
+}
+
+.stemc-prose {
+	font-size: 20px;
+	line-height: 1.75em;
+}
+
+.stemc-prose p {
+	margin: 0 0 20px;
+}
+
+.stemc-prose h2,
+.stemc-prose h3,
+.stemc-prose h4 {
+	margin: 36px 0 16px;
+	line-height: 1.3em;
+}
+
+.stemc-prose ul,
+.stemc-prose ol {
+	margin: 0 0 20px;
+	padding-left: 22px;
+}
+
+.stemc-prose li + li {
+	margin-top: 8px;
+}
+
+.stemc-prose img,
+.blog-details-one .blog-content img {
+	display: block;
+	max-width: 100%;
+	width: auto;
+	height: auto;
+	margin: 24px auto;
+	border-radius: var(--stemc-radius);
+}
+
+.stemc-prose figure,
+.blog-details-one .blog-content figure {
+	margin: 28px 0;
+}
+
+.stemc-prose figcaption,
+.blog-details-one .blog-content figcaption {
+	margin-top: 10px;
+	font-size: 0.85em;
+	line-height: 1.5;
+	text-align: center;
+	opacity: 0.75;
+}
+
+.stemc-prose > *:last-child {
+	margin-bottom: 0;
+}
+
+.stemc-profile__title {
+	margin: 0 0 24px;
+	font-size: clamp(28px, 3vw, 40px);
+	line-height: 1.25em;
+}
+
+.stemc-detail__aside {
+	padding: var(--stemc-gap);
+	border: 1px solid var(--stemc-line);
+	border-radius: var(--stemc-radius);
+}
+
+.stemc-aside__title {
+	margin: 0 0 20px;
+	font-size: 22px;
+}
+
+.stemc-aside__item + .stemc-aside__item {
+	margin-top: 20px;
+	padding-top: 20px;
+	border-top: 1px solid var(--stemc-line);
+}
+
+.stemc-aside__date {
+	margin: 0 0 6px;
+	font-size: 12px;
+	letter-spacing: 1px;
+	color: var(--stemc-muted);
+}
+
+.stemc-aside__link {
+	font-size: 18px;
+	line-height: 1.4em;
+	color: #000;
+}
+
+.stemc-aside__link:hover {
+	text-decoration: underline;
+}
+
+/* ==========================================================================
+   10. Status kosong & paginasi
+   ========================================================================== */
+.stemc-empty {
+	padding: 60px 30px;
+	border: 1px dashed var(--stemc-line);
+	border-radius: var(--stemc-radius);
+	text-align: center;
+	color: var(--stemc-muted);
+}
+
+.stemc-empty--wide {
+	grid-column: 1 / -1;
+}
+
+.stemc-pagination {
+	margin-top: calc(var(--stemc-gap) * 2);
+}
+
+.stemc-pagination ul {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 10px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.stemc-pagination a,
+.stemc-pagination span {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 48px;
+	height: 48px;
+	padding: 0 16px;
+	border: 1px solid var(--stemc-line);
+	border-radius: 50px;
+	font-size: 16px;
+	color: #000;
+	transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+.stemc-pagination a:hover {
+	border-color: #000;
+}
+
+.stemc-pagination .is-current span {
+	background: #000;
+	border-color: #000;
+	color: #fff;
+}
+
+.stemc-pagination .is-disabled span {
+	opacity: 0.35;
+}
+
+/* ==========================================================================
+   11. Pill dan tombol panah beranda
+   Gaya bawaan menaruh pill dan tombol panah ini dalam flex tanpa jarak, sehingga
+   garis tepinya saling menempel dan terbaca sebagai satu bidang.
+   ========================================================================== */
+.hero-banner-two .tags,
+.fancy-banner-one .tags,
+.hero-banner-two .slider-arrows {
+	gap: 12px;
+}
+
+/* ==========================================================================
+   12. Logo mitra
+   Enam logo raster (urutan stem.id lama) menggantikan lima SVG demo. Aturan
+   lengkap ditulis di sini supaya tampilan tidak bergantung pada style.min.css
+   yang kadang gagal ter-parse di browser karena rantai @import font.
+   ========================================================================== */
+.feedback-section-one .client-logos {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	align-items: center;
+	gap: 0;
+	padding-top: 25px;
+}
+
+.feedback-section-one .client-logos .logo {
+	/* Enam lingkaran + tumpukan 24 px antar butir: 6W - 5*24 = 100% */
+	width: min(260px, calc((100% + 120px) / 6));
+	height: auto;
+	aspect-ratio: 1;
+	margin: 0 -12px;
+	padding: 0;
+	border: 1px solid rgba(0, 0, 0, 0.1);
+	background: #fff;
+	overflow: hidden;
+}
+
+.feedback-section-one .client-logos .logo img {
+	width: 62%;
+	height: auto;
+	aspect-ratio: 1;
+	object-fit: contain;
+	display: block;
+}
+
+@media (max-width: 1199px) {
+	/* Dua baris Ã— tiga kolom, mengikuti grid Partnership di stem.id lama. */
+	.feedback-section-one .client-logos .logo {
+		width: min(230px, calc((100% + 72px) / 3));
+		margin: 8px -12px;
+	}
+}
+
+@media (max-width: 767px) {
+	.feedback-section-one .client-logos .logo {
+		width: min(170px, calc((100% + 40px) / 2));
+		margin: 6px -10px;
+	}
+}
+
+/* ==========================================================================
+   13. Footer
+   Footer bawaan hanya memuat satu baris tautan yang dipaksa memakai
+   .footer-nav li:first-child { width: 100% }, sehingga enam menu STEM-C patah
+   jadi dua baris tak rata. Strukturnya diganti kolom tematik seperti situs
+   institusi: identitas, dua kolom navigasi, dan blok kontak.
+   ========================================================================== */
+/* Padding bawah dahulu 260 px untuk menampung watermark yang diposisikan
+   absolut. Watermark kini ikut alur (lihat bagian 3), jadi sisanya hanya perlu
+   jarak nafas di bawah hurufnya. */
+.footer-two .bg-wrapper {
+	padding: 120px 0 clamp(40px, 4vw, 64px);
+	text-align: left;
+}
+
+/* Ajakan kolaborasi */
+.stemc-foot-cta {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-end;
+	justify-content: space-between;
+	gap: 40px;
+	padding-bottom: 80px;
+}
+
+.stemc-foot-cta__text {
+	flex: 1 1 560px;
+	max-width: 760px;
+}
+
+.stemc-foot-eyebrow {
+	display: inline-block;
+	margin-bottom: 22px;
+	padding: 6px 18px;
+	border: 1px solid rgba(255, 255, 255, 0.25);
+	border-radius: 50px;
+	font-size: 14px;
+	font-weight: 500;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: rgba(255, 255, 255, 0.75);
+}
+
+.footer-two .bg-wrapper .stemc-foot-cta h2 {
+	margin: 0;
+	font-size: clamp(38px, 5.4vw, 96px);
+	line-height: 1.02em;
+}
+
+.stemc-foot-cta__text p {
+	max-width: 560px;
+	margin: 24px 0 0;
+	font-size: 18px;
+	line-height: 1.65em;
+	color: rgba(255, 255, 255, 0.6);
+}
+
+.stemc-foot-cta__action {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 18px;
+}
+
+.stemc-foot-mail {
+	font-size: 18px;
+	color: rgba(255, 255, 255, 0.6);
+	transition: color 0.3s ease;
+}
+
+.stemc-foot-mail:hover {
+	color: #fff;
+}
+
+/* Kolom utama */
+.stemc-foot-grid {
+	display: grid;
+	grid-template-columns: minmax(260px, 1.6fr) repeat(2, minmax(140px, 0.8fr)) minmax(240px, 1.2fr);
+	gap: 48px 40px;
+	padding: 64px 0;
+	border-top: 1px solid rgba(255, 255, 255, 0.12);
+	border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.stemc-foot-logo {
+	display: inline-block;
+	margin-bottom: 24px;
+}
+
+.stemc-foot-logo img {
+	height: 46px;
+	width: auto;
+}
+
+.stemc-foot-brand p {
+	max-width: 320px;
+	margin: 0;
+	font-size: 17px;
+	line-height: 1.65em;
+	color: rgba(255, 255, 255, 0.55);
+}
+
+.stemc-foot-social {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+	margin: 28px 0 0;
+	padding: 0;
+}
+
+.stemc-foot-social a {
+	display: inline-block;
+	padding: 8px 20px;
+	border: 1px solid rgba(255, 255, 255, 0.2);
+	border-radius: 50px;
+	font-size: 15px;
+	color: rgba(255, 255, 255, 0.7);
+	transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+.stemc-foot-social a:hover {
+	background: #fff;
+	border-color: #fff;
+	color: #101010;
+}
+
+.stemc-foot-col h3 {
+	margin: 0 0 24px;
+	font-size: 14px;
+	font-weight: 600;
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+	color: rgba(255, 255, 255, 0.45);
+}
+
+.stemc-foot-col ul {
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+	margin: 0;
+	padding: 0;
+}
+
+.stemc-foot-col a,
+.stemc-foot-col address {
+	font-size: 17px;
+	line-height: 1.55em;
+	font-style: normal;
+	color: rgba(255, 255, 255, 0.75);
+	transition: color 0.3s ease;
+}
+
+.stemc-foot-col a:hover {
+	color: #fff;
+}
+
+.stemc-foot-col--contact li {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+.stemc-foot-label {
+	font-size: 13px;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: rgba(255, 255, 255, 0.4);
+}
+
+/* Baris penutup */
+.stemc-foot-bottom {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px 32px;
+	padding-top: 32px;
+}
+
+.stemc-foot-copy {
+	margin: 0;
+	font-size: 16px;
+	color: rgba(255, 255, 255, 0.45);
+}
+
+.stemc-foot-legal {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 28px;
+	margin: 0;
+	padding: 0;
+}
+
+.stemc-foot-legal a {
+	font-size: 16px;
+	color: rgba(255, 255, 255, 0.45);
+	transition: color 0.3s ease;
+}
+
+.stemc-foot-legal a:hover {
+	color: #fff;
+}
+
+@media (max-width: 1199px) {
+	.stemc-foot-grid {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 44px 40px;
+	}
+
+	/* Identitas dan kontak butuh lebih banyak ruang baca daripada daftar
+	   tautan, jadi keduanya memakai lebar penuh. */
+	.stemc-foot-brand,
+	.stemc-foot-col--contact {
+		grid-column: 1 / -1;
+	}
+}
+
+@media (max-width: 991px) {
+	.footer-two .bg-wrapper {
+		padding-top: 90px;
+	}
+
+	.stemc-foot-cta {
+		padding-bottom: 56px;
+	}
+
+	.stemc-foot-grid {
+		padding: 48px 0;
+	}
+}
+
+@media (max-width: 575px) {
+	.stemc-foot-grid {
+		grid-template-columns: 1fr;
+		gap: 36px;
+	}
+
+	.stemc-foot-bottom {
+		flex-direction: column;
+		align-items: flex-start;
+	}
+}
+
+/* ==========================================================================
+   14. Navigasi slider berita
+   Slick menyembunyikan tombol panah dengan .slick-hidden ketika slide tak
+   cukup untuk digeser, sehingga tombol ikut redup mengikuti keadaan slider.
+   ========================================================================== */
+.blog-slider-nav {
+	gap: 10px;
+	margin: 0;
+	padding: 0;
+}
+
+.blog-slider-nav li {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 52px;
+	height: 52px;
+	border: 1px solid rgba(0, 0, 0, 0.15);
+	border-radius: 50%;
+	font-size: 20px;
+	color: #000;
+	cursor: pointer;
+	transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease, opacity 0.3s ease;
+}
+
+.blog-slider-nav li:hover {
+	background: #000;
+	border-color: #000;
+	color: #fff;
+}
+
+.blog-slider-nav li.slick-disabled {
+	opacity: 0.35;
+	cursor: default;
+}
+
+.blog-slider-nav li.slick-disabled:hover {
+	background: transparent;
+	border-color: rgba(0, 0, 0, 0.15);
+	color: #000;
+}
+
+/* Kursor grab menegaskan bahwa deretan berita bisa ditarik. */
+.blog-section-one .blog-slider-one:not(.slick-initialized),
+.blog-section-one .slick-list {
+	cursor: grab;
+}
+
+.blog-section-one .slick-list:active {
+	cursor: grabbing;
+}
+
+/* ==========================================================================
+   15. Ringkasan modul di beranda
+   Beranda memakai ulang komponen dari halaman Kegiatan, Publikasi, dan
+   Dokumentasi supaya tampilannya sama persis dengan halaman tujuannya. Yang
+   berbeda hanya kepala bagian: di halaman modul judulnya bertumpuk dengan
+   paragraf pengantar, sedangkan di beranda judul disandingkan dengan tombol
+   "Lihat Semua" karena bagian ini memang jalan masuk ke menu.
+   ========================================================================== */
+.stemc-home-section--tint {
+	background: var(--stemc-surface);
+}
+
+.stemc-home-head {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-end;
+	justify-content: space-between;
+	gap: var(--stemc-gap);
+	margin-bottom: calc(var(--stemc-gap) * 2);
+}
+
+.stemc-home-head__text {
+	flex: 1 1 480px;
+}
+
+/* .title-one memberi jarak bawah pada h2 yang di sini sudah ditangani oleh
+   margin-bottom kepala bagian. */
+.stemc-home-head__text h2 {
+	margin-bottom: 0;
+}
+
+.stemc-home-head__action {
+	flex: 0 0 auto;
+	padding-bottom: 6px;
+}
+
+@media (max-width: 767px) {
+	.stemc-home-head {
+		align-items: flex-start;
+	}
+
+	.stemc-home-head__action {
+		padding-bottom: 0;
+	}
+}
+
+/* Galeri beranda hanya cuplikan, jadi jumlahnya dipangkas mengikuti jumlah
+   kolom agar selalu berhenti tepat di akhir baris kedua. */
+@media (max-width: 1199px) {
+	.stemc-gallery--home .stemc-shot:nth-child(n + 7) {
+		display: none;
+	}
+}
+
+@media (max-width: 767px) {
+	.stemc-gallery--home .stemc-shot:nth-child(n + 5) {
+		display: none;
+	}
+}
+
+/* ==========================================================================
+   16. Submenu
+   Dropdown sudah dibuka lewat .dropdown:hover di style.css, jadi
+   yang ditambahkan di sini hanya penyesuaian: jembatan hover, posisi yang
+   melewati tab lengkung, warna sesuai palet situs, dan versi accordion untuk
+   layar sentuh.
+
+   Tautan induk sengaja tidak memakai data-bs-toggle="dropdown". Bila dipakai,
+   klik pada "Kegiatan" hanya membuka daftar dan tidak pernah sampai ke
+   /kegiatan. Dengan hover murni, arahkan untuk melihat submenu dan klik untuk
+   membuka halaman indeksnya.
+   ========================================================================== */
+.stemc-caret {
+	margin-left: 7px;
+	font-size: 12px;
+	transition: transform 0.3s ease;
+}
+
+@media (min-width: 992px) {
+	/* Pembungkus baris hanya dibutuhkan di layar sentuh untuk menampung tombol
+	   accordion. display:contents melepasnya dari alur supaya susunan navbar
+	   desktop sama persis seperti sebelum submenu ada. */
+	.navbar-nav .stemc-subnav-row {
+		display: contents;
+	}
+
+	.theme-main-menu .navbar .nav-item.dropdown:hover .stemc-caret {
+		transform: rotate(180deg);
+	}
+
+	/* Tab lengkung membentang dari -14px setinggi 73px, sehingga tepi bawahnya
+	   jatuh di bawah butir menu. Dropdown digeser turun agar tidak muncul di
+	   dalam tab, lalu celah yang tercipta ditutup :before supaya kursor bisa
+	   menyeberang tanpa menutup daftar. */
+	.theme-main-menu .navbar .dropdown-menu {
+		top: calc(100% + 26px);
+		min-width: 240px;
+		padding: 12px;
+		border-radius: 18px;
+		box-shadow: 0 32px 64px -28px rgba(0, 0, 0, 0.3);
+	}
+
+	/* Jembatan dibuat 32px, sedikit lebih tinggi daripada celah 26px, agar
+	   tepi atasnya bertumpang dengan tepi bawah butir menu. Tanpa tumpangan
+	   itu tersisa jalur beberapa piksel yang menutup daftar saat kursor
+	   turun ke arahnya. */
+	.theme-main-menu .navbar .dropdown-menu:before {
+		left: 0;
+		right: 0;
+		top: -32px;
+		height: 32px;
+	}
+
+	.theme-main-menu .navbar .dropdown-menu .dropdown-item {
+		padding: 9px 16px;
+		border-radius: 10px;
+		font-size: 16px;
+		line-height: 1.45em;
+		/* Judul topik profil bisa panjang; biarkan membungkus daripada terpotong. */
+		white-space: normal;
+	}
+
+	/* Garis bawah bawaan diganti sorotan latar agar area sasarannya
+	   terbaca sebagai satu baris utuh. */
+	.theme-main-menu .navbar .dropdown-menu .dropdown-item span:before {
+		display: none;
+	}
+
+	.theme-main-menu .navbar .dropdown-menu .dropdown-item:hover,
+	.theme-main-menu .navbar .dropdown-menu .dropdown-item.active {
+		background: var(--stemc-surface);
+		color: #000;
+	}
+
+	.theme-main-menu .navbar .dropdown-menu .dropdown-item.active {
+		font-weight: 600;
+	}
+}
+
+/* Accordion untuk sidenav (di semua lebar) dan navbar ringkas (di bawah 992px),
+   karena kedua tempat itu dipakai tanpa kursor. */
+.stemc-subnav-row {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 10px;
+}
+
+.stemc-subnav-toggle {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex: 0 0 auto;
+	width: 34px;
+	height: 34px;
+	padding: 0;
+	border: 1px solid var(--stemc-line);
+	border-radius: 50%;
+	background: transparent;
+	font-size: 13px;
+	color: #000;
+	transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+.stemc-subnav-toggle:hover {
+	background: #000;
+	border-color: #000;
+	color: #fff;
+}
+
+.stemc-subnav-toggle i {
+	transition: transform 0.3s ease;
+}
+
+.stemc-subnav-toggle[aria-expanded="true"] i {
+	transform: rotate(180deg);
+}
+
+/* Nilai max-height cukup memuat submenu terpanjang (tujuh butir). Tinggi pasti
+   tidak bisa dipakai karena isinya ditentukan data. */
+.sidebar-nav .stemc-subnav {
+	overflow: hidden;
+	max-height: 0;
+	margin: 0;
+	padding-left: 18px;
+	border-left: 1px solid var(--stemc-line);
+	transition: max-height 0.35s ease;
+}
+
+.sidebar-nav .stemc-subnav.is-open {
+	max-height: 460px;
+}
+
+.sidebar-nav .stemc-subnav a {
+	display: block;
+	padding: 4px 0;
+	font-size: 17px;
+	line-height: 1.5em;
+	color: var(--stemc-muted);
+	transition: color 0.3s ease;
+}
+
+.sidebar-nav .stemc-subnav a:hover,
+.sidebar-nav .stemc-subnav a.is-active {
+	color: #000;
+}
+
+@media (max-width: 991px) {
+	/* Rantai selektor dipanjangkan agar mengalahkan
+	   ".theme-main-menu .navbar .dropdown-menu". Padding atas
+	   bawaannya membuat submenu tetap setinggi 20px meski max-height nol,
+	   karena box-sizing border-box tidak bisa memampatkan padding. */
+	.theme-main-menu .navbar .navbar-nav .stemc-subnav {
+		display: block;
+		overflow: hidden;
+		max-height: 0;
+		margin: 0;
+		padding: 0 0 0 18px;
+		border: 0;
+		border-left: 1px solid var(--stemc-line);
+		box-shadow: none;
+		transition: max-height 0.35s ease, padding 0.35s ease;
+	}
+
+	.theme-main-menu .navbar .navbar-nav .stemc-subnav.is-open {
+		max-height: 460px;
+		padding-top: 6px;
+		padding-bottom: 6px;
+	}
+
+	.theme-main-menu .navbar .navbar-nav .stemc-subnav .dropdown-item {
+		padding: 6px 0;
+		white-space: normal;
+	}
+
+	/* Caret pada label hanya penanda di desktop; di sini tugasnya diambil alih
+	   tombol accordion. */
+	.stemc-caret {
+		display: none;
+	}
+}
+
+/* ==========================================================================
+   17. Daftar dokumen
+   Susunannya mengikuti daftar publikasi: penanda di kiri, isi di tengah, aksi
+   di kanan, sehingga kedua halaman terbaca sebagai satu keluarga.
+   ========================================================================== */
+.stemc-doc {
+	display: grid;
+	grid-template-columns: 92px minmax(0, 1fr) auto;
+	gap: var(--stemc-gap);
+	align-items: center;
+	padding: 28px 0;
+	border-bottom: 1px solid var(--stemc-line);
+}
+
+.stemc-doc:first-child {
+	border-top: 1px solid var(--stemc-line);
+}
+
+.stemc-doc__icon {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	height: 92px;
+	border: 1px solid var(--stemc-line);
+	border-radius: var(--stemc-radius-sm);
+	font-size: 26px;
+	color: var(--stemc-muted);
+}
+
+.stemc-doc__ext {
+	font-size: 12px;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+}
+
+.stemc-doc__title {
+	margin: 12px 0 8px;
+	font-size: 23px;
+	line-height: 1.35em;
+}
+
+.stemc-doc__text {
+	margin: 0 0 10px;
+	font-size: 17px;
+	line-height: 1.6em;
+	color: var(--stemc-muted);
+}
+
+.stemc-doc__pending {
+	font-size: 15px;
+	color: var(--stemc-muted);
+}
+
+@media (max-width: 767px) {
+	.stemc-doc {
+		grid-template-columns: 64px minmax(0, 1fr);
+		gap: calc(var(--stemc-gap) * 0.6);
+		padding: 24px 0;
+	}
+
+	.stemc-doc__icon {
+		height: 64px;
+		font-size: 20px;
+	}
+
+	.stemc-doc__title {
+		font-size: 19px;
+	}
+
+	/* Tombol pindah ke bawah blok teks agar lebar bacanya tidak tergerus. */
+	.stemc-doc__action {
+		grid-column: 2;
+	}
+}
+
+/* ==========================================================================
+   18. Tata letak profil
+   Tiap topik kini punya halamannya sendiri, jadi daftar topik ikut tampil di
+   samping isi supaya perpindahan antar bagian tidak harus lewat bilah menu.
+   ========================================================================== */
+.stemc-profile-layout {
+	display: grid;
+	grid-template-columns: minmax(220px, 280px) minmax(0, 1fr);
+	gap: calc(var(--stemc-gap) * 2);
+	align-items: start;
+}
+
+.stemc-profile-nav {
+	position: sticky;
+	/* Header menempel setinggi kira-kira 90px saat digulir. */
+	top: 120px;
+	padding: var(--stemc-gap);
+	border: 1px solid var(--stemc-line);
+	border-radius: var(--stemc-radius);
+}
+
+.stemc-profile-nav__head {
+	margin: 0 0 18px;
+	font-size: 13px;
+	letter-spacing: 0.12em;
+	color: var(--stemc-muted);
+}
+
+.stemc-profile-nav ul {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	margin: 0;
+	padding: 0;
+}
+
+.stemc-profile-nav a {
+	display: block;
+	padding: 9px 14px;
+	border-radius: 10px;
+	font-size: 17px;
+	line-height: 1.45em;
+	color: var(--stemc-muted);
+	transition: background 0.3s ease, color 0.3s ease;
+}
+
+.stemc-profile-nav a:hover {
+	background: var(--stemc-surface);
+	color: #000;
+}
+
+.stemc-profile-nav a.is-active {
+	background: #000;
+	color: #fff;
+	font-weight: 500;
+}
+
+@media (max-width: 991px) {
+	.stemc-profile-layout {
+		grid-template-columns: 1fr;
+		gap: var(--stemc-gap);
+	}
+
+	/* Sticky tidak berguna ketika daftarnya berada di atas isi. */
+	.stemc-profile-nav {
+		position: static;
+	}
+
+	.stemc-profile-nav ul {
+		flex-direction: row;
+		flex-wrap: wrap;
+	}
+
+	.stemc-profile-nav a {
+		border: 1px solid var(--stemc-line);
+		border-radius: 50px;
+		padding: 8px 18px;
+		font-size: 16px;
+	}
+
+	.stemc-profile-nav a.is-active {
+		border-color: #000;
+	}
+}
+
+/* Honeypot form kontak: tetap di DOM supaya bot mengisinya, tersembunyi dari manusia. */
+.stemc-hp {
+	position: absolute;
+	left: -10000px;
+	width: 1px;
+	height: 1px;
+	overflow: hidden;
+}
+
+/* ==========================================================================
+   15. Bingkai gambar konsisten
+   Ukuran kotak ditentukan CSS, bukan rasio file. Foto diisi object-fit:cover.
+   ========================================================================== */
+.stemc-frame {
+	display: block;
+	overflow: hidden;
+	margin: 0 0 40px;
+	aspect-ratio: var(--stemc-frame-wide);
+	border-radius: var(--stemc-radius);
+	background: var(--stemc-surface);
+}
+
+.stemc-frame img {
+	display: block;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	object-position: center;
+}
+
+.carousel-item .stemc-frame,
+.service-accordion .stemc-frame {
+	margin-bottom: 0;
+}
+
+.service-accordion .stemc-frame {
+	margin-top: 24px;
+}
+
+.inner-banner-one .bg-wrapper {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: var(--stemc-banner-h);
+	min-height: var(--stemc-banner-h);
+	max-height: var(--stemc-banner-h);
+	padding: 32px 20px !important;
+	overflow: hidden;
+	background-size: cover;
+	background-position: center;
+	background-repeat: no-repeat;
+	background-color: #1a1a1a;
+}
+
+.inner-banner-one h2 {
+	max-width: 18ch;
+	margin: 0 auto;
+	font-size: clamp(28px, 4.2vw, 72px) !important;
+	line-height: 1.12;
+}
+
+.blog-meta-one .media {
+	aspect-ratio: var(--stemc-frame-wide);
+	overflow: hidden;
+	border-radius: var(--stemc-radius);
+	background: var(--stemc-surface);
+}
+
+.blog-meta-one .media img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	object-position: center;
+	border-radius: inherit;
+}
+
+/* Navigasi tanpa muat ulang: bilah tipis di atas layar. Konten lama meredup
+   hanya selama skeleton belum tampil (perpindahan cepat tidak perlu skeleton). */
+.stemc-is-swapping:not(.stemc-has-skeleton) [data-stemc-region="main"] {
+	opacity: 0.5;
+	pointer-events: none;
+	transition: opacity 0.2s ease;
+}
+
+.stemc-is-swapping::before {
+	content: "";
+	position: fixed;
+	top: 0;
+	left: 0;
+	z-index: 9999;
+	width: 100%;
+	height: 3px;
+	background: #000;
+	transform-origin: left center;
+	animation: stemc-swap-bar 1.2s ease-in-out infinite;
+}
+
+@keyframes stemc-swap-bar {
+	0% {
+		transform: scaleX(0);
+	}
+
+	60% {
+		transform: scaleX(0.75);
+	}
+
+	100% {
+		transform: scaleX(1);
+	}
+}
+
+/* Skeleton loading: bentuknya menyesuaikan halaman tujuan (lihat
+   stemc-swap.js) supaya konten asli masuk tanpa lompatan besar. */
+.stemc-skeleton {
+	padding-bottom: calc(var(--stemc-gap) * 2);
+}
+
+/* Sengaja gelap: banner asli selalu berupa foto gelap, dan logo di header
+   memakai versi putih saat berada di atas banner. */
+.stemc-skeleton__banner {
+	height: var(--stemc-banner-h);
+	margin: 0 25px calc(var(--stemc-gap) * 2);
+	border-radius: var(--stemc-radius);
+	background: #23272c;
+	animation: stemc-sk-pulse 1.6s ease-in-out infinite;
+}
+
+.stemc-sk {
+	display: block;
+	border-radius: var(--stemc-radius-sm);
+	background: linear-gradient(90deg, #eceef0 25%, #f7f8f9 37%, #eceef0 63%);
+	background-size: 400% 100%;
+	animation: stemc-sk-sheen 1.5s ease-in-out infinite;
+}
+
+.stemc-sk--line {
+	height: 14px;
+	margin-bottom: 14px;
+	border-radius: 7px;
+}
+
+.stemc-sk--media {
+	aspect-ratio: var(--stemc-frame-wide);
+	width: 100%;
+	margin-bottom: 20px;
+}
+
+.stemc-sk--square {
+	aspect-ratio: var(--stemc-frame-shot);
+	width: 100%;
+}
+
+.stemc-sk--badge {
+	width: 84px;
+	height: 84px;
+	flex: 0 0 auto;
+}
+
+.stemc-sk--button {
+	width: 148px;
+	height: 46px;
+	border-radius: 50px;
+	flex: 0 0 auto;
+}
+
+.stemc-sk--field {
+	height: 52px;
+	margin-bottom: 22px;
+}
+
+.stemc-sk--area {
+	height: 150px;
+	margin-bottom: 22px;
+}
+
+.stemc-sk-intro {
+	max-width: 720px;
+	margin-bottom: calc(var(--stemc-gap) * 1.5);
+}
+
+.stemc-sk-grid {
+	display: grid;
+	gap: var(--stemc-gap);
+}
+
+.stemc-sk-grid--2 {
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.stemc-sk-grid--square {
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.stemc-sk-row {
+	display: flex;
+	align-items: center;
+	gap: var(--stemc-gap);
+	padding: var(--stemc-gap) 0;
+	border-bottom: 1px solid var(--stemc-line);
+}
+
+.stemc-sk-row__body {
+	flex: 1 1 auto;
+}
+
+.stemc-sk-row__body .stemc-sk--line:last-child {
+	margin-bottom: 0;
+}
+
+.stemc-sk-article {
+	display: grid;
+	grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+	gap: calc(var(--stemc-gap) * 1.5);
+}
+
+.stemc-sk-form {
+	max-width: 720px;
+	margin: 0 auto;
+}
+
+@media (max-width: 991px) {
+	.stemc-sk-grid--2,
+	.stemc-sk-article {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.stemc-sk-grid--square {
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+	}
+}
+
+@media (max-width: 575px) {
+	.stemc-sk-grid--square {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+
+	.stemc-sk-row {
+		flex-wrap: wrap;
+	}
+}
+
+@keyframes stemc-sk-sheen {
+	0% {
+		background-position: 100% 0;
+	}
+
+	100% {
+		background-position: 0 0;
+	}
+}
+
+@keyframes stemc-sk-pulse {
+	0%, 100% {
+		opacity: 1;
+	}
+
+	50% {
+		opacity: 0.6;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.stemc-is-swapping:not(.stemc-has-skeleton) [data-stemc-region="main"] {
+		opacity: 0.75;
+		transition: none;
+	}
+
+	.stemc-is-swapping::before,
+	.stemc-sk,
+	.stemc-skeleton__banner {
+		animation: none;
+	}
+}
+
+/* ==========================================================================
+   Halaman error (404 / 403 / 500) â€” mandiri, tanpa layout situs penuh
+   ========================================================================== */
+.stemc-error-page {
+	margin: 0;
+	min-height: 100vh;
+	background:
+		radial-gradient(ellipse at 20% 0%, #e8eef3 0%, transparent 55%),
+		radial-gradient(ellipse at 100% 100%, #dfe8f0 0%, transparent 50%),
+		#f4f6f8;
+	color: #1a1f24;
+	font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+.stemc-error {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 100vh;
+	padding: 40px 20px;
+}
+
+.stemc-error__inner {
+	max-width: 520px;
+	text-align: center;
+}
+
+.stemc-error__brand {
+	margin: 0 0 12px;
+	font-size: 0.8rem;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: #5a6570;
+}
+
+.stemc-error__code {
+	margin: 0;
+	font-size: clamp(4rem, 14vw, 7rem);
+	font-weight: 700;
+	line-height: 1;
+	letter-spacing: -0.04em;
+	color: #0d3b4c;
+}
+
+.stemc-error__title {
+	margin: 16px 0 12px;
+	font-size: clamp(1.4rem, 3vw, 1.85rem);
+	font-weight: 600;
+	line-height: 1.3;
+}
+
+.stemc-error__text {
+	margin: 0 0 32px;
+	font-size: 1.05rem;
+	line-height: 1.6;
+	color: #5a6570;
+}
+
+.stemc-error__actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 16px;
+	align-items: center;
+	justify-content: center;
+}
+
+.stemc-error__actions .btn-one {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 14px 28px;
+	border-radius: 50px;
+	background: #0d3b4c;
+	color: #fff;
+	font-weight: 600;
+	text-decoration: none;
+}
+
+.stemc-error__actions .btn-one:hover {
+	background: #0a2e3b;
+	color: #fff;
+}
+
+.stemc-error__link {
+	color: #0d3b4c;
+	font-weight: 600;
+	text-decoration: underline;
+	text-underline-offset: 4px;
+}
+
+.stemc-error__link:hover {
+	color: #000;
+}
+
+/* ==========================================================================
+   Editor gambar inline + bilah Edit Beranda (hanya pengelola yang login)
+   ========================================================================== */
+.stemc-ie-file {
+	position: fixed;
+	width: 1px;
+	height: 1px;
+	opacity: 0;
+	pointer-events: none;
+}
+
+.stemc-ie-btn {
+	position: absolute;
+	z-index: 9998;
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	padding: 9px 16px;
+	border: 0;
+	border-radius: 50px;
+	background: #0d3b4c;
+	color: #fff;
+	font-size: 14px;
+	font-weight: 600;
+	line-height: 1;
+	box-shadow: 0 6px 20px rgba(0, 0, 0, .28);
+	cursor: pointer;
+}
+
+.stemc-ie-btn:hover {
+	background: #0a2e3b;
+}
+
+.stemc-ie-btn__icon {
+	font-size: 15px;
+}
+
+.stemc-ie-dock {
+	position: fixed;
+	right: 18px;
+	bottom: 18px;
+	z-index: 9998;
+	max-width: min(340px, calc(100vw - 36px));
+}
+
+.stemc-ie-dock__fab {
+	padding: 10px 18px;
+	border: 0;
+	border-radius: 50px;
+	background: #0d3b4c;
+	color: #fff;
+	font-size: 13px;
+	font-weight: 600;
+	box-shadow: 0 6px 18px rgba(0, 0, 0, .22);
+	cursor: pointer;
+}
+
+.stemc-ie-dock__fab:hover {
+	background: #0a2e3b;
+}
+
+.stemc-ie-dock__panel {
+	padding: 14px 16px 16px;
+	border: 1px solid rgba(0, 0, 0, .12);
+	border-radius: 16px;
+	background: #fff;
+	color: #101010;
+	box-shadow: 0 12px 32px rgba(0, 0, 0, .2);
+}
+
+.stemc-ie-dock__head {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	margin-bottom: 8px;
+}
+
+.stemc-ie-dock__head strong {
+	font-size: 15px;
+}
+
+.stemc-ie-dock__close {
+	width: 32px;
+	height: 32px;
+	padding: 0;
+	border: 0;
+	border-radius: 50%;
+	background: #f0f1f2;
+	color: #101010;
+	font-size: 22px;
+	line-height: 1;
+	cursor: pointer;
+}
+
+.stemc-ie-dock__close:hover {
+	background: #e4e6e8;
+}
+
+.stemc-ie-dock__hint {
+	margin: 0 0 12px;
+	font-size: 13px;
+	line-height: 1.45;
+	color: rgba(0, 0, 0, .55);
+}
+
+.stemc-ie-dock__mode {
+	display: block;
+	width: 100%;
+	padding: 10px 12px;
+	border: 1px solid rgba(0, 0, 0, .14);
+	border-radius: 10px;
+	background: #f5f6f7;
+	color: #101010;
+	font-size: 13px;
+	font-weight: 600;
+	text-align: left;
+	cursor: pointer;
+}
+
+.stemc-ie-dock__mode.is-on {
+	background: #0d3b4c;
+	border-color: #0d3b4c;
+	color: #fff;
+}
+
+.stemc-ie-dock__admin {
+	display: block;
+	margin-top: 10px;
+	font-size: 13px;
+	font-weight: 600;
+	color: #0d3b4c;
+	text-decoration: underline;
+	text-underline-offset: 3px;
+}
+
+.stemc-ie-dock__admin:hover {
+	color: #0a2e3b;
+}
+
+/* Penanda halus supaya pengelola tahu gambar mana yang bisa diganti. */
+.stemc-ie-on [data-stemc-image-edit] {
+	outline: 1px dashed rgba(13, 59, 76, .35);
+	outline-offset: 2px;
+}
+
+.stemc-ie-on [data-stemc-image-edit].stemc-ie-active {
+	outline: 2px solid #f4a300;
+	outline-offset: 2px;
+}
+
+.stemc-ie-busy {
+	position: relative;
+	opacity: .55;
+	transition: opacity .2s ease;
+}
+
+.stemc-ie-toast {
+	position: fixed;
+	left: 50%;
+	bottom: 24px;
+	z-index: 9999;
+	transform: translateX(-50%);
+	max-width: min(420px, calc(100vw - 32px));
+	padding: 12px 20px;
+	border-radius: 10px;
+	background: #0d3b4c;
+	color: #fff;
+	font-size: 14px;
+	text-align: center;
+	box-shadow: 0 10px 28px rgba(0, 0, 0, .28);
+}
+
+.stemc-ie-toast.is-error {
+	background: #a4243d;
+}
+
+/* --------------------------------------------------------------------------
+   Direktori peneliti & utilitas riset
+   -------------------------------------------------------------------------- */
+.stemc-researcher {
+	height: 100%;
+}
+
+.stemc-researcher__photo {
+	display: block;
+	margin-bottom: 18px;
+}
+
+.stemc-frame--portrait {
+	aspect-ratio: 3 / 4;
+}
+
+.stemc-researcher__name {
+	font-size: 1.35rem;
+	margin: 12px 0 8px;
+}
+
+.stemc-researcher__name a {
+	color: inherit;
+	text-decoration: none;
+}
+
+.stemc-researcher__expertise {
+	margin: 0;
+	opacity: .8;
+}
+
+.stemc-researcher-detail__photo {
+	margin-bottom: 24px;
+}
+
+.stemc-researcher-detail__links {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 12px 20px;
+	margin-top: 28px;
+}
+
+.stemc-researcher-detail__links a {
+	font-weight: 500;
+	text-decoration: underline;
+	text-underline-offset: 3px;
+}
+
+.stemc-lang a {
+	color: inherit;
+	text-decoration: none;
+}
+
+.stemc-search-form {
+	display: flex;
+	gap: 12px;
+	margin-bottom: 40px;
+}
+
+.stemc-search-form input[type="search"] {
+	flex: 1;
+	min-height: 52px;
+	padding: 0 18px;
+	border: 1px solid rgba(13, 59, 76, .2);
+	border-radius: 8px;
+}
+
+.stemc-search-hit {
+	padding: 18px 0;
+	border-bottom: 1px solid rgba(13, 59, 76, .12);
+}
+
+.stemc-search-hit__type {
+	display: inline-block;
+	margin-bottom: 6px;
+	font-size: 12px;
+	letter-spacing: .04em;
+	text-transform: uppercase;
+	opacity: .65;
+}
+
+.stemc-search-hit__title {
+	margin: 0;
+	font-size: 1.25rem;
+}
+
+.stemc-search-hit__title a {
+	color: inherit;
+	text-decoration: none;
+}
+
+/* Skip link & share */
+.stemc-skip {
+	position: absolute;
+	left: -9999px;
+	top: 0;
+	z-index: 10000;
+	padding: 10px 16px;
+	background: #000;
+	color: #fff;
+}
+
+.stemc-skip:focus {
+	left: 12px;
+	top: 12px;
+}
+
+.stemc-share {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 12px 20px;
+	align-items: center;
+}
+
+.stemc-share a {
+	text-decoration: underline;
+}
+
+.stemc-share__label {
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: .04em;
+	font-size: 12px;
+}
+
+/* ==========================================================================
+   Performa: cegah CLS saat Slick belum inisialisasi
+   Sebelum .slick() jalan, semua .item ditumpuk vertikal → tinggi hero
+   membengkak lalu mengecil (CLS ~1.0). Sembunyikan slide non-pertama.
+   ========================================================================== */
+.hero-slider-one:not(.slick-initialized) > .item:not(:first-child),
+.blog-slider-one:not(.slick-initialized) > .item:not(:first-child),
+.project-slider-one:not(.slick-initialized) > .item:not(:first-child) {
+	display: none;
+}
+
+#preloader {
+	position: fixed;
+	inset: 0;
+	z-index: 999998;
+	pointer-events: none;
+}
+
+.card-style-one .arrow-icon {
+	width: 40px;
+	height: 40px;
+	flex-shrink: 0;
+}

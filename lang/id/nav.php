@@ -1,0 +1,28 @@
+<?php
+
+return [
+    'home' => 'Beranda',
+    'about' => 'Tentang Kami',
+    'researchers' => 'Peneliti',
+    'researcher_directory' => 'Direktori Peneliti',
+    'research' => 'Riset & Publikasi',
+    'catalog' => 'Katalog Penelitian',
+    'publications' => 'Publikasi Ilmiah',
+    'products' => 'Produk & Inovasi',
+    'hki' => 'HKI',
+    'modules' => 'Modul & Bahan Ajar',
+    'news_events' => 'Kegiatan & Berita',
+    'news' => 'Berita',
+    'agenda' => 'Agenda Kegiatan',
+    'calendar' => 'Kalender',
+    'gallery' => 'Dokumentasi',
+    'call' => 'Call for Paper',
+    'partnership' => 'Kerja Sama',
+    'partners' => 'Mitra Institusi',
+    'mou' => 'MoU/MoA',
+    'apply' => 'Ajukan Kerja Sama',
+    'documents' => 'Dokumen',
+    'contact' => 'Kontak',
+    'search' => 'Cari',
+    'privacy' => 'Kebijakan Privasi',
+];
