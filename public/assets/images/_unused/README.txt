@@ -1,0 +1,3 @@
+Gambar stok lama yang sudah dipastikan tidak dirujuk seeder/CMS/DB.
+boleh dipindah ke sini. Jangan pindahkan file yang masih berpath assets/images/...
+di database.
